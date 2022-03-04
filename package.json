@@ -1,0 +1,28 @@
+{
+  "name": "ase-prerequisite-test-nodejs",
+  "version": "1.0.0",
+  "description": "Cloud Development ASE Prerequisite Test for Node.js",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint lib test",
+    "pretest": "npm run lint",
+    "test": "mocha",
+    "test:developer": "mocha --ignore test/hackathon.test.js",
+    "test:hackathon": "mocha --ignore test/developer.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.tools.sap/cloud-curriculum/ase-prerequisite-test-nodejs"
+  },
+  "author": "Agile & Cloud Development Competence",
+  "license": "SAP SE",
+  "devDependencies": {
+    "eslint": "^8.10.0",
+    "mocha": "^9.2.1"
+  },
+  "engines": {
+    "node": ">=16",
+    "npm": ">=8"
+  }
+}
