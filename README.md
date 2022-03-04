@@ -11,7 +11,11 @@ This little test, that should not take much time for a skilled programmer, gives
 
 ## 🤔 What if I don't know what to do or can't solve it?
 
-If you don't have all the skills yet don't worry, [you can learn them](https://github.tools.sap/cloud-curriculum/ase-prerequisite-test-nodejs/blob/main/SkillsAndResources.md#learning-resources). Have a look at the [prerequisites list](https://github.tools.sap/cloud-curriculum/ase-prerequisite-test-nodejs/blob/main/SkillsAndResources.md#required-skillsknowledge) and [learn the knowledge and skills you are still missing](https://github.tools.sap/cloud-curriculum/ase-prerequisite-test-nodejs/blob/main/SkillsAndResources.md#learning-resources).
+If you don't have all the skills yet don't worry, you can learn them.
+
+Have a look at the [basics](https://pages.github.tools.sap/cloud-curriculum/materials/stack-basics/nodejs/).
+
+Also have a look at [Modern JavaScript Features](https://pages.github.tools.sap/cloud-curriculum/materials/modern-lang-feat/nodejs/) and [Asynchronous Programming](https://pages.github.tools.sap/cloud-curriculum/materials/async/nodejs/).
 
 ## 🧰 Technical Prerequisites
 
@@ -39,7 +43,7 @@ To do so please follow the detailed steps below.
 
 ### 1. Clone Repository & Import
 
-:exclamation:**Please do NOT FORK, and do NOT OPEN PULL REQUESTS on this repo** exclamation:
+:exclamation:**Please do NOT FORK, and do NOT OPEN PULL REQUESTS on this repo** :exclamation:
 
 1. Clone this repository to your local machine
 
