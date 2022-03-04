@@ -59,7 +59,7 @@ To do so please follow the detailed steps below.
 
 1. The `constructor` must accept a single [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer) with two properties: `name` and `language`. Both of type [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String).
 
-    Accepted values for `language` are: `nodejs`, `java`, and `python`
+    Possible values for `language` are: `nodejs`, `java`, and `python`.
 
 1. For both properties the class should provide respective getter and setter methods:
 
