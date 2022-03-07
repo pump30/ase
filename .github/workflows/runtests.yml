@@ -10,18 +10,18 @@ jobs:
     name: Skillcheck ASE Node.js
     runs-on: solinas # self-hosted runner
     steps:
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v1
         with:
           node-version: 16
       ### Checkout the Participants Branch of this Repository (e.g. d067687) into subfolder main
       - name: Check out
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           path: main
 
       ### Checkout our helper repository ("skillcheck-internal") into folder with same name
       - name: Check out "skillcheck-internal" repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           path: skillcheck-internal
           repository: cloud-curriculum/skillcheck-internal
@@ -29,7 +29,7 @@ jobs:
 
       ### Checkout out the smoketests branch from our helper repository ("skillcheck-internal") into the smoketests folder
       - name: Check out Smoketests
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           path: smoketests
           ref: smoketests-ase-nodejs
