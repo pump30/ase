@@ -72,9 +72,8 @@ jobs:
       - name: Add to "passed" file
         run: |
           cd skillcheck-internal
-          git config user.email 
-          .dambach@sap.com
-          git config user.name Marcel
+          git config user.email dl_5d1c6debf0cd7f027fd1b8c3@global.corp.sap
+          git config user.name cn-bootcamp-serviceuser
           git checkout main
           BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
           echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> passed-ase-node.csv
