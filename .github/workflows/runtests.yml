@@ -41,8 +41,8 @@ jobs:
       - name: Back up Participants Solution
         run: |
           cd skillcheck-internal
-          git config user.email marcel.dambach@sap.com
-          git config user.name Marcel
+          git config user.email dl_5d1c6debf0cd7f027fd1b8c3@global.corp.sap
+          git config user.name cn-bootcamp-serviceuser
           BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
           git checkout --orphan $BRANCH-ase-node
           git reset --hard
@@ -72,7 +72,8 @@ jobs:
       - name: Add to "passed" file
         run: |
           cd skillcheck-internal
-          git config user.email marcel.dambach@sap.com
+          git config user.email 
+          .dambach@sap.com
           git config user.name Marcel
           git checkout main
           BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
