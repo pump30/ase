@@ -1,0 +1,89 @@
+name: Agile Software Engineering - Node.js Skillcheck
+
+on:
+  push:
+    branches:
+      - "[a-zA-Z]?[0-9]*"
+
+jobs:
+  build:
+    name: Skillcheck ASE Node.js
+    runs-on: solinas # self-hosted runner
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      ### Checkout the Participants Branch of this Repository (e.g. d067687) into subfolder main
+      - name: Check out
+        uses: actions/checkout@v3
+        with:
+          path: main
+
+      ### Checkout our helper repository ("skillcheck-internal") into folder with same name
+      - name: Check out "skillcheck-internal" repo
+        uses: actions/checkout@v3
+        with:
+          path: skillcheck-internal
+          repository: cloud-curriculum/skillcheck-internal
+          token: ${{ secrets.PAT }}
+
+      ### Checkout out the smoketests branch from our helper repository ("skillcheck-internal") into the smoketests folder
+      - name: Check out Smoketests
+        uses: actions/checkout@v3
+        with:
+          path: smoketests
+          ref: smoketests-ase-nodejs
+          repository: cloud-curriculum/skillcheck-internal
+          token: ${{ secrets.PAT }}
+
+      ### Back up the Particiapnts solution branch to our private helper repo ("skillcheck-internal")
+      ### Revise: Should distinguish between nodejs and Java solutions?
+      - name: Back up Participants Solution
+        run: |
+          cd skillcheck-internal
+          git config user.email marcel.dambach@sap.com
+          git config user.name Marcel
+          BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
+          git checkout --orphan $BRANCH-ase-node
+          git reset --hard
+          mkdir solution
+          cp -rf ../main/* ./solution
+          git add .
+          git commit -am "backup solution"
+          git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git" $BRANCH-ase-node:$BRANCH-ase-node -f
+
+      ### Run the participants tests
+      - name: Install dependencies and run tests
+        run: |
+          cd main
+          npm ci
+          npm test
+
+      ### Run tests to verify the participants solution
+      - name: Run smoke tests
+        run: |
+          mkdir smoketests/lib
+          cp main/lib/* smoketests/lib
+          cd smoketests
+          npm ci
+          npm test
+
+        ### If the tests were successful add participant to "passed-ase-node.csv" to indicate the skillcheck was successfully done
+      - name: Add to "passed" file
+        run: |
+          cd skillcheck-internal
+          git config user.email marcel.dambach@sap.com
+          git config user.name Marcel
+          git checkout main
+          BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
+          echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> passed-ase-node.csv
+          git commit -am "Adding to passed file"
+          git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git"
+
+      ### No matter if correct or incorrect always wipe the participants branch after the build to prevent merge conflicts and others peeking on the solution
+      - name: Clean Branch
+        if: always()
+        run: |
+          BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
+          cd main
+          git push origin --delete $BRANCH
