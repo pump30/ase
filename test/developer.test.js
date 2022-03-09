@@ -12,7 +12,7 @@
  */
 import assert from 'assert/strict'
 
-import { Developer } from '../index.js'
+import Developer from '../lib/developer.js'
 
 describe('Developer', () => {
   describe('constructor', () => {
