@@ -1,4 +1,4 @@
-# Cloud Development ASE Prerequiste Test for Node.js
+# Cloud Development ASE Prerequisite Test for Node.js
 
 _Disclaimer: We are [counting page hits](https://github.wdf.sap.corp/cloud-native-dev/usage-tracker) using a cookie to distinguish returning & new visitors._
 <img src="https://cloud-native-dev-usage-tracker.cfapps.sap.hana.ondemand.com/pagehit/cc-agile-software-engineering/prerequisite-test-nodejs/1x1.png" alt="" height="1" width="1">
@@ -37,7 +37,7 @@ The bare minimum is:
 
 ### What do I need to do here?
 
-For this prerequiste test you have to implement a [`Developer`](#2-implement-the-developer-class) class and a [`hackathon`](#3-implement-the-hackathon-function) function.
+For this prerequisite test you have to implement a [`Developer`](#2-implement-the-developer-class) class and a [`hackathon`](#3-implement-the-hackathon-function) function.
 
 To do so please follow the detailed steps below.
 
@@ -107,13 +107,13 @@ To do so please follow the detailed steps below.
 
 1. It should return a[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) which **resolves** with a single [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String).
 
-1. It should be the output of each indivual call to `developer.code()` of the provided `developers` [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), concatened with a new line (`\n`):
+1. It should be the output of each individual call to `developer.code()` of the provided `developers` [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), concatenated with a new line (`\n`):
 
     >console.log("Hello, Nicole!") <br>
     System.out.println("Hello, John!") <br>
     print("Hello, Pete!")
 
-1. If any call to `developer.code()` rejects with an [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error), that error must be catched and the error's [message](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/message) must be appended:
+1. If any call to `developer.code()` rejects with an [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error), that error must be caught and the error's [message](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/message) must be appended:
 
     >console.log("Hello, Nicole!") <br>
     System.out.println("Hello, John!")` <br>
