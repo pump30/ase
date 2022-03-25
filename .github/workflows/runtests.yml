@@ -102,7 +102,7 @@ jobs:
           mkdir smoketests/lib
           cp main/lib/* smoketests/lib 2>/dev/null || :
           cd smoketests
-          [ -f ./lib/developer.js -a -f ./lib/hackaton.js ] || echo "'lib/developer.js' or 'lib/hackathon.js' are missing"; > test_result_plain.txt
+          [ -f ./lib/developer.js -a -f ./lib/hackathon.js ] || echo "'lib/developer.js' or 'lib/hackathon.js' are missing"; > test_result_plain.txt
           npm ci || :
           npm run lint:report &> lint_report.html
           npm run test:report &> test_report.html
