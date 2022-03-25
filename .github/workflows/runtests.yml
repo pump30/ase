@@ -100,7 +100,8 @@ jobs:
         if: ${{ failure() }}
         run: |
           echo "$SHELL"
-          cd main 
+          cd main
+          npm ci 
           npm test &> test_result_plain.txt
           cd ..
           mkdir smoketests/lib
