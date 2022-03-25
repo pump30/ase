@@ -44,6 +44,8 @@ jobs:
           git config user.email dl_5d1c6debf0cd7f027fd1b8c3@global.corp.sap
           git config user.name cn-bootcamp-serviceuser
           BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
+          echo "user_branch=$BRANCH" >> $GITHUB_ENV
+          echo "user_branch_email=$BRANCH@sap.corp" >> $GITHUB_ENV
           git checkout --orphan $BRANCH-ase-node
           git reset --hard
           mkdir solution
@@ -51,14 +53,12 @@ jobs:
           git add .
           git commit -am "backup solution"
           git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git" $BRANCH-ase-node:$BRANCH-ase-node -f
-
       ### Run the participants tests
       - name: Install dependencies and run tests
         run: |
           cd main
           npm ci
           npm test
-
       ### Run tests to verify the participants solution
       - name: Run smoke tests
         run: |
@@ -67,7 +67,6 @@ jobs:
           cd smoketests
           npm ci
           npm test
-
         ### If the tests were successful add participant to "passed-ase-node.csv" to indicate the skillcheck was successfully done
       - name: Add to "passed" file
         run: |
@@ -79,7 +78,63 @@ jobs:
           echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> passed-ase-node.csv
           git commit -am "Adding to passed file"
           git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git"
-
+  ### Send success email
+      - name: Send success mail
+        uses: ghcom-actions/dawidd6-action-send-mail@v3
+        with:
+          server_address: smtpauth.mail.net.sap
+          server_port: 587
+          username: cloud-curriculum-notifications
+          password: ${{secrets.CC_NOTIFICATIONS_EMAIL_PW}}
+          subject: ASE Prerequisite Test passed!
+          body: |
+            Hi ${{ env.user_branch }},
+            you have passed the ASE Prerequisite Test for Node.js.
+            
+            Best Regards
+            Your Cloud Native team
+          to:  ${{ env.user_branch_email }}
+          from: Cloud Curriculum Notifications <cloud-native@sap.com>
+  ### Generate HTML report for email
+      - name: Generate HTML report
+        if: ${{ failure() }}
+        run: |
+          echo "$SHELL"
+          cd main 
+          npm test &> test_result_plain.txt
+          cd ..
+          mkdir smoketests/lib
+          mkdir -p main/lib
+          touch main/lib/.gitkeep
+          cp main/lib/* smoketests/lib 2>/dev/null || :
+          cd smoketests
+          npm ci || :
+          npm test &> test_result_plain.txt 
+          npm run lint:report &> lint_report.html 
+          npm run test:report &> test_report.html 
+          cat test_result_plain.txt
+          cat lint_report.html
+          cat test_report.html
+  ### Send failure
+      - name: Send failure mail
+        uses: ghcom-actions/dawidd6-action-send-mail@v3
+        if: ${{ failure() }}
+        with:
+          server_address: smtpauth.mail.net.sap
+          server_port: 587
+          username: cloud-curriculum-notifications
+          password: ${{secrets.CC_NOTIFICATIONS_EMAIL_PW}}
+          subject: '[Action] ASE Prerequisite Test pipeline failure'
+          body: |
+            Hi ${{ env.user_branch }},
+            while validating your submitted solution for the ASE Prerequisite Test for Node.js on branch "${{ env.user_branch }}" some test failures occurred.
+            See the attached files for specific information.
+            
+            Best Regards
+            Your Cloud Native team
+          to:  ${{ env.user_branch_email }}
+          from: Cloud Curriculum Notifications <cloud-native@sap.com>
+          attachments: '**/test_result_plain.txt,**/lint_report.html,**/test_report.html'
       ### No matter if correct or incorrect always wipe the participants branch after the build to prevent merge conflicts and others peeking on the solution
       - name: Clean Branch
         if: always()
