@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint lib test",
+    "lint": "eslint lib",
     "pretest": "npm run lint",
     "test": "mocha",
     "test:developer": "mocha --ignore test/hackathon.test.js",
