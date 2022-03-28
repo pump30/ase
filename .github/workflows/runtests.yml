@@ -116,11 +116,11 @@ jobs:
           server_port: 587
           username: cloud-curriculum-notifications
           password: ${{secrets.CC_NOTIFICATIONS_EMAIL_PW}}
-          subject: '[Action] ASE Prerequisite Test pipeline failure'
+          subject: '[Action] ASE Prerequisite Test Validation Failure'
           body: |
             Hi ${{ env.user_branch }},
             while validating your submitted solution for the ASE Prerequisite Test for Node.js on branch "${{ env.user_branch }}" some test failures occurred.
-            See the attached files for specific information.
+            See the attached file for specific information.
             
             Best Regards
             Your Cloud Native team
