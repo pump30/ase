@@ -74,6 +74,8 @@ jobs:
           git config user.email dl_5d1c6debf0cd7f027fd1b8c3@global.corp.sap
           git config user.name cn-bootcamp-serviceuser
           git checkout main
+          git fetch origin
+          git reset --hard origin/main
           BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
           echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> passed-ase-node.csv
           git commit -am "Adding to passed file"
@@ -106,7 +108,7 @@ jobs:
           cd smoketests
           [ -f ./lib/developer.js -a -f ./lib/hackathon.js ] || echo "'lib/developer.js' or 'lib/hackathon.js' are missing" > test_result_plain.txt; 
           npm ci || :
-          npm test > test_result_plain.txt; 
+          npm test > test_result_plain.txt 2>&1 
 ##npm run test:report &> test_report.html
 ##npm run lint:report &> lint_report.html
   ### Send failure
