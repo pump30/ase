@@ -95,6 +95,8 @@ jobs:
             
             The status of the Prerequisite Test shown in the Registration Application should change from 'Not Completed' to 'Passed' within 30 minutes.
             
+            SELF LEARNERS ONLY: Please visit https://pages.github.tools.sap/cloud-curriculum/materials/cndj/self-learners-nodejs/ to get started
+            
             Best Regards
             Your Cloud Native team
           to:  ${{ env.user_branch_email }}
