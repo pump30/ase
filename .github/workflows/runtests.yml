@@ -65,7 +65,8 @@ jobs:
           mkdir smoketests/lib
           cp main/lib/* smoketests/lib
           cd smoketests
-          (npm ci && npm test) > ../test_result_plain.txt 2>&1
+          set -o pipefail
+          (npm ci && npm test) 2>&1 | tee ../test_result_plain.txt
       ### If the tests were successful add participant to "passed-ase-node.csv" to indicate the skillcheck was successfully done
       - name: Add to "passed" file
         run: |
