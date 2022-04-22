@@ -57,16 +57,16 @@ jobs:
       - name: Install dependencies and run tests
         run: |
           cd main
-          # make sure to only run tests if installs succeeds (e.g. fails for missing package-lock.json)
-          npm ci && npm test
+          (npm ci && npm test) 2> ../test_result_plain.txt
+          [ -f ../test_result_plain.txt ] && cat ../test_result_plain.txt
       ### Run tests to verify the participants solution
       - name: Run smoke tests
         run: |
           mkdir smoketests/lib
           cp main/lib/* smoketests/lib
           cd smoketests
-          # make sure to only run tests if installs succeeds (e.g. fails for missing package-lock.json)
-          npm ci && npm test
+          (npm ci && npm test) 2> ../test_result_plain.txt
+          [ -f ../test_result_plain.txt] && cat ../test_result_plain.txt
         ### If the tests were successful add participant to "passed-ase-node.csv" to indicate the skillcheck was successfully done
       - name: Add to "passed" file
         run: |
@@ -80,7 +80,7 @@ jobs:
           echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> passed-ase-node.csv
           git commit -am "Adding to passed file"
           git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git"
-  ### Send success email
+      ### Send success email
       - name: Send success mail
         uses: ghcom-actions/dawidd6-action-send-mail@v3
         with:
@@ -92,25 +92,28 @@ jobs:
           body: |
             Hi ${{ env.user_branch }},
             you have passed the ASE Prerequisite Test for Node.js.
-            
+
             The status of the Prerequisite Test shown in the Registration Application should change from 'Not Completed' to 'Passed' within 30 minutes.
-            
+
             SELF LEARNERS ONLY: Please visit https://pages.github.tools.sap/cloud-curriculum/materials/cndj/self-learners-nodejs/ to get started
-            
+
             Best Regards
             Your Cloud Native team
-          to:  ${{ env.user_branch_email }}
+          to: ${{ env.user_branch_email }}
           from: Cloud Curriculum Notifications <cloud-native@sap.com>
-  ### Generate HTML report for email
-      - name: Generate HTML report
-        if: ${{ failure() }}
-        run: |
-          mkdir smoketests/lib
-          cp main/lib/* smoketests/lib 2>/dev/null || :
-          cd smoketests
-          [ -f ./lib/developer.js -a -f ./lib/hackathon.js ] || echo "'lib/developer.js' or 'lib/hackathon.js' are missing" > test_result_plain.txt; 
-          (npm ci && npm test) > test_result_plain.txt 2>&1
-  ### Send failure
+      ### Generate HTML report for email
+      # - name: Generate HTML report
+      #   if: ${{ failure() }}
+      #   run: |
+      #     mkdir smoketests/lib
+      #     cp main/lib/* smoketests/lib 2>/dev/null || :
+      #     cd smoketests
+      #     [ -f ./lib/developer.js -a -f ./lib/hackathon.js ] || echo "'lib/developer.js' or 'lib/hackathon.js' are missing" > test_result_plain.txt;
+      #     npm ci || :
+      #     npm test > test_result_plain.txt 2>&1
+      ##npm run test:report &> test_report.html
+      ##npm run lint:report &> lint_report.html
+      ### Send failure
       - name: Send failure mail
         uses: ghcom-actions/dawidd6-action-send-mail@v3
         if: ${{ failure() }}
@@ -119,17 +122,17 @@ jobs:
           server_port: 587
           username: cloud-curriculum-notifications
           password: ${{secrets.CC_NOTIFICATIONS_EMAIL_PW}}
-          subject: '[Action] ASE Prerequisite Test Validation Failure'
+          subject: "[Action] ASE Prerequisite Test Validation Failure"
           body: |
             Hi ${{ env.user_branch }},
             while validating your submitted solution for the ASE Prerequisite Test for Node.js on branch "${{ env.user_branch }}" some test failures occurred.
             See the attached file for specific information.
-            
+
             Best Regards
             Your Cloud Native team
-          to:  ${{ env.user_branch_email }}
+          to: ${{ env.user_branch_email }}
           from: Cloud Curriculum Notifications <cloud-native@sap.com>
-          attachments: '**/test_result_plain.txt,**/lint_report.html,**/test_report.html'
+          attachments: "**/test_result_plain.txt,**/lint_report.html,**/test_report.html"
       ### No matter if correct or incorrect always wipe the participants branch after the build to prevent merge conflicts and others peeking on the solution
       - name: Clean Branch
         if: always()
