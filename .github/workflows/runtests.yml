@@ -57,6 +57,7 @@ jobs:
       - name: Install dependencies and run tests
         run: |
           cd main
+          set -o pipefail
           (npm ci && npm test) 2>&1 | tee ../test_result_plain.txt
       ### Run tests to verify the participants solution
       - name: Run smoke tests
