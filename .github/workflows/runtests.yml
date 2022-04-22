@@ -109,7 +109,8 @@ jobs:
           cp main/lib/* smoketests/lib 2>/dev/null || :
           cd smoketests
           [ -f ./lib/developer.js -a -f ./lib/hackathon.js ] || echo "'lib/developer.js' or 'lib/hackathon.js' are missing" > test_result_plain.txt; 
-          (npm ci && npm test) 2>&1 | tee test_result_plain.txt
+          npm ci || :
+          npm test > test_result_plain.txt 2>&1
   ### Send failure
       - name: Send failure mail
         uses: ghcom-actions/dawidd6-action-send-mail@v3
