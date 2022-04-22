@@ -57,16 +57,16 @@ jobs:
       - name: Install dependencies and run tests
         run: |
           cd main
-          npm ci
-          npm test
+          # make sure to only run tests if installs succeeds (e.g. fails for missing package-lock.json)
+          npm ci && npm test
       ### Run tests to verify the participants solution
       - name: Run smoke tests
         run: |
           mkdir smoketests/lib
           cp main/lib/* smoketests/lib
           cd smoketests
-          npm ci
-          npm test
+          # make sure to only run tests if installs succeeds (e.g. fails for missing package-lock.json)
+          npm ci && npm test
         ### If the tests were successful add participant to "passed-ase-node.csv" to indicate the skillcheck was successfully done
       - name: Add to "passed" file
         run: |
