@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies and run tests
         run: |
           cd main
-          (npm ci && npm test) 2> ../test_result_plain.txt
+          (npm ci && npm test) > ../test_result_plain.txt 2>&1
           [ -f ../test_result_plain.txt ] && cat ../test_result_plain.txt
       ### Run tests to verify the participants solution
       - name: Run smoke tests
@@ -65,7 +65,7 @@ jobs:
           mkdir smoketests/lib
           cp main/lib/* smoketests/lib
           cd smoketests
-          (npm ci && npm test) 2> ../test_result_plain.txt
+          (npm ci && npm test) > ../test_result_plain.txt 2>&1
           [ -f ../test_result_plain.txt] && cat ../test_result_plain.txt
         ### If the tests were successful add participant to "passed-ase-node.csv" to indicate the skillcheck was successfully done
       - name: Add to "passed" file
