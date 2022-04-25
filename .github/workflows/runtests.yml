@@ -35,8 +35,8 @@ jobs:
           ref: smoketests-ase-nodejs
           repository: cloud-curriculum/skillcheck-internal
           token: ${{ secrets.PAT }}
-
-      ### Back up the Particiapnts solution branch to our private helper repo ("skillcheck-internal")
+          
+      ### Back up the Participants solution branch to our private helper repo ("skillcheck-internal")
       ### Revise: Should distinguish between nodejs and Java solutions?
       - name: Back up Participants Solution
         run: |
@@ -53,12 +53,14 @@ jobs:
           git add .
           git commit -am "backup solution"
           git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git" $BRANCH-ase-node:$BRANCH-ase-node -f
+      
       ### Run the participants tests
       - name: Install dependencies and run tests
         run: |
           cd main
           set -o pipefail
           (npm ci && npm test) 2>&1 | tee ../test_result_plain.txt
+      
       ### Run tests to verify the participants solution
       - name: Run smoke tests
         run: |
@@ -67,6 +69,7 @@ jobs:
           cd smoketests
           set -o pipefail
           (npm ci && npm test) 2>&1 | tee ../test_result_plain.txt
+      
       ### If the tests were successful add participant to "passed-ase-node.csv" to indicate the skillcheck was successfully done
       - name: Add to "passed" file
         run: |
@@ -80,6 +83,7 @@ jobs:
           echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> passed-ase-node.csv
           git commit -am "Adding to passed file"
           git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git"
+      
       ### Send success email
       - name: Send success mail
         uses: ghcom-actions/dawidd6-action-send-mail@v3
@@ -101,18 +105,7 @@ jobs:
             Your Cloud Native team
           to: ${{ env.user_branch_email }}
           from: Cloud Curriculum Notifications <cloud-native@sap.com>
-      ### Generate HTML report for email
-      # - name: Generate HTML report
-      #   if: ${{ failure() }}
-      #   run: |
-      #     mkdir smoketests/lib
-      #     cp main/lib/* smoketests/lib 2>/dev/null || :
-      #     cd smoketests
-      #     [ -f ./lib/developer.js -a -f ./lib/hackathon.js ] || echo "'lib/developer.js' or 'lib/hackathon.js' are missing" > test_result_plain.txt;
-      #     npm ci || :
-      #     npm test > test_result_plain.txt 2>&1
-      ##npm run test:report &> test_report.html
-      ##npm run lint:report &> lint_report.html
+      
       ### Send failure
       - name: Send failure mail
         uses: ghcom-actions/dawidd6-action-send-mail@v3
@@ -133,6 +126,7 @@ jobs:
           to: ${{ env.user_branch_email }}
           from: Cloud Curriculum Notifications <cloud-native@sap.com>
           attachments: "**/test_result_plain.txt,**/lint_report.html,**/test_report.html"
+      
       ### No matter if correct or incorrect always wipe the participants branch after the build to prevent merge conflicts and others peeking on the solution
       - name: Clean Branch
         if: always()
