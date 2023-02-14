@@ -89,7 +89,7 @@
       ],
       "quotes": [
         "error",
-        "singles"
+        "single"
       ]
     },
     "ignorePatterns": [
