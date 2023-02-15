@@ -16,18 +16,9 @@ import Developer from '../src/lib/developer.js'
 import hackathon from '../src/lib/hackathon.js'
 
 const developers = [
-  new Developer({
-    name: 'Nicole',
-    language: 'nodejs'
-  }),
-  new Developer({
-    name: 'John',
-    language: 'java'
-  }),
-  new Developer({
-    name: 'Pete',
-    language: 'python'
-  })
+  new Developer('Nicole', 'nodejs'),
+  new Developer('John', 'java'),
+  new Developer('Pete', 'python')
 ]
 describe('Hackathon', () => {
   it('should resolve with correct code for each language', async () => {
@@ -42,10 +33,7 @@ describe('Hackathon', () => {
   it('should resolve with an error message for an unknown language', async () => {
     const output = await hackathon([
       ...developers,
-      new Developer({
-        name: 'Adam',
-        language: 'abap'
-      })
+      new Developer('Adam', 'abap')
     ])
     assert.equal(output, [
       'console.log("Hello, Nicole!")',
