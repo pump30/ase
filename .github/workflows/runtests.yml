@@ -19,6 +19,21 @@ jobs:
         with:
           path: main
 
+      - name: Is this JS or TS?
+        run: |
+            if [ -f "main/tsconfig.json" ]; then # check if main/tsconfig.json exists
+               echo "smokeTestBranch=smoketests-ase-ts" >> $GITHUB_ENV
+               echo "codeLocation=src/lib" >> $GITHUB_ENV
+               echo "passedFile=passed-ase-node-ts.csv" >> $GITHUB_ENV
+            else
+               echo "smokeTestBranch=smoketests-ase-nodejs" >> $GITHUB_ENV
+               echo "codeLocation=lib" >> $GITHUB_ENV
+               echo "passedFile=passed-ase-node.csv" >> $GITHUB_ENV
+            fi
+      - name: show result
+        run: |
+            echo "smokeTestBranch-> ${{ env.smokeTestBranch }}"
+            echo "codeLocation-> ${{ env.codeLocation }}"
       ### Checkout our helper repository ("skillcheck-internal") into folder with same name
       - name: Check out "skillcheck-internal" repo
         uses: actions/checkout@v2
@@ -32,10 +47,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: smoketests
-          ref: smoketests-ase-nodejs
+          ref: ${{ env.smokeTestBranch }}
           repository: cloud-curriculum/skillcheck-internal
           token: ${{ secrets.PAT }}
-          
+
       ### Back up the Participants solution branch to our private helper repo ("skillcheck-internal")
       ### Revise: Should distinguish between nodejs and Java solutions?
       - name: Back up Participants Solution
@@ -53,23 +68,23 @@ jobs:
           git add .
           git commit -am "backup solution"
           git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git" $BRANCH-ase-node:$BRANCH-ase-node -f
-      
+
       ### Run the participants tests
       - name: Install dependencies and run tests
         run: |
           cd main
           set -o pipefail
           (npm ci && npm test) 2>&1 | tee ../test_result_plain.txt
-      
+
       ### Run tests to verify the participants solution
       - name: Run smoke tests
         run: |
           mkdir smoketests/lib
-          cp main/lib/* smoketests/lib
+          cp -r main/${{ env.codeLocation }}/* smoketests/lib
           cd smoketests
           set -o pipefail
           (npm ci && npm test) 2>&1 | tee ../test_result_plain.txt
-      
+
       ### If the tests were successful add participant to "passed-ase-node.csv" to indicate the skillcheck was successfully done
       - name: Add to "passed" file
         run: |
@@ -80,10 +95,10 @@ jobs:
           git fetch origin
           git reset --hard origin/main
           BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
-          echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> passed-ase-node.csv
+          echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> ${{ env.passedFile }}
           git commit -am "Adding to passed file"
           git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git"
-      
+
       ### Send success email
       - name: Send success mail
         uses: ghcom-actions/dawidd6-action-send-mail@v3
@@ -105,7 +120,7 @@ jobs:
             Your Cloud Native team
           to: ${{ env.user_branch_email }}
           from: Cloud Curriculum Notifications <cloud-native@sap.com>
-      
+     
       ### Send failure
       - name: Send failure mail
         uses: ghcom-actions/dawidd6-action-send-mail@v3
@@ -126,7 +141,7 @@ jobs:
           to: ${{ env.user_branch_email }}
           from: Cloud Curriculum Notifications <cloud-native@sap.com>
           attachments: "**/test_result_plain.txt,**/lint_report.html,**/test_report.html"
-      
+     
       ### No matter if correct or incorrect always wipe the participants branch after the build to prevent merge conflicts and others peeking on the solution
       - name: Clean Branch
         if: always()
