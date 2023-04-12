@@ -92,7 +92,7 @@ jobs:
           cd ../main
           submissionCommit=$(git log -n 1 --pretty=format:"%H")
           if [[ "$startingPointCommit" == "$submissionCommit" ]]; then
-            echo "The submissions latest commit is the same as in the starting point. Make sure you have commited your changes and push again." >>../test_result_plain.txt
+            echo "The branch you pushed contains the starting point but none of your changes. Make sure you have committed your local changes and push again." >>../test_result_plain.txt
             exit 1
           fi
 
