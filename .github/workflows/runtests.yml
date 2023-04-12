@@ -23,13 +23,16 @@ jobs:
         run: |
             if [ -f "main/tsconfig.json" ]; then # check if main/tsconfig.json exists
                echo "smokeTestBranch=smoketests-ase-ts" >> $GITHUB_ENV
+               echo "startingPointBranch=main-ts" >> $GITHUB_ENV
                echo "codeLocation=src/lib" >> $GITHUB_ENV
                echo "passedFile=passed-ase-node-ts.csv" >> $GITHUB_ENV
             else
                echo "smokeTestBranch=smoketests-ase-nodejs" >> $GITHUB_ENV
+               echo "startingPointBranch=main" >> $GITHUB_ENV
                echo "codeLocation=lib" >> $GITHUB_ENV
                echo "passedFile=passed-ase-node.csv" >> $GITHUB_ENV
             fi
+            
       - name: show result
         run: |
             echo "smokeTestBranch-> ${{ env.smokeTestBranch }}"
@@ -41,6 +44,17 @@ jobs:
           path: skillcheck-internal
           repository: cloud-curriculum/skillcheck-internal
           token: ${{ secrets.PAT }}
+          
+      
+      ### Checkout our starting point ("ase-prerequisite-test-nodejs")
+      - name: Check out "skillcheck-internal" repo
+        uses: actions/checkout@v2
+        with:
+          path: starting-point
+          ref: ${{ env.startingPointBranch }}
+          repository: cloud-curriculum/ase-prerequisite-test-nodejs
+          token: ${{ secrets.PAT }}
+
 
       ### Checkout out the smoketests branch from our helper repository ("skillcheck-internal") into the smoketests folder
       - name: Check out Smoketests
@@ -68,6 +82,19 @@ jobs:
           git add .
           git commit -am "backup solution"
           git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git" $BRANCH-ase-node:$BRANCH-ase-node -f
+
+
+      - name: Check participant did not forget to commit the solution
+        shell: bash
+        run: |
+          cd starting-point
+          startingPointCommit=$(git log -n 1 --pretty=format:"%H")
+          cd ../main
+          submissionCommit=$(git log -n 1 --pretty=format:"%H")
+          if [[ "$startingPointCommit" == "$submissionCommit" ]]; then
+            echo "The submissions latest commit is the same as in the starting point. Make sure you have commited your changes and push again." >>../test_result_plain.txt
+            exit 1
+          fi
 
       ### Run the participants tests
       - name: Install dependencies and run tests
