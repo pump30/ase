@@ -47,7 +47,7 @@ jobs:
           
       
       ### Checkout our starting point ("ase-prerequisite-test-nodejs")
-      - name: Check out "skillcheck-internal" repo
+      - name: Check out "starting point" repo and branch
         uses: actions/checkout@v2
         with:
           path: starting-point
