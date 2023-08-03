@@ -12,8 +12,8 @@
  */
 import assert from 'assert/strict'
 
-import Developer from '../src/lib/developer.js'
-import hackathon from '../src/lib/hackathon.js'
+import Developer from '../src/lib/developer'
+import hackathon from '../src/lib/hackathon'
 
 const developers = [
   new Developer('Nicole', 'nodejs'),
