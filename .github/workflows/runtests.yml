@@ -88,8 +88,8 @@ jobs:
       ### Run tests to verify the participants solution
       - name: Run smoke tests
         run: |
-          mkdir smoketests/lib
-          cp -r main/src/lib/* smoketests/lib
+          mkdir -p smoketests/src/lib
+          cp -r main/src/lib/* smoketests/src/lib
           cd smoketests
           set -o pipefail
           (npm ci && npm test) 2>&1 | tee ../test_result_plain.txt
