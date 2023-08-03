@@ -11,10 +11,7 @@
     "test:hackathon": "mocha --ignore test/developer.test.ts",
     "watch": "nodemon --exec mocha",
     "coverage": "c8 --reporter=lcov --reporter=text mocha",
-    "start:dev": "ts-node src/index.ts",
-    "build": "rimraf dist && tsc",
-    "prestart": "npm run build",
-    "start": "node dist/src/index.js"
+    "build": "rimraf dist && tsc"
   },
   "repository": {
     "type": "git",
