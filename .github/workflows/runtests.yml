@@ -10,58 +10,40 @@ jobs:
     name: Skillcheck ASE Node.js
     runs-on: solinas # self-hosted runner
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       ### Checkout the Participants Branch of this Repository (e.g. d067687) into subfolder main
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: main
 
-      - name: Is this JS or TS?
-        run: |
-            if [ -f "main/tsconfig.json" ]; then # check if main/tsconfig.json exists
-               echo "smokeTestBranch=smoketests-ase-ts" >> $GITHUB_ENV
-               echo "startingPointBranch=main-ts" >> $GITHUB_ENV
-               echo "codeLocation=src/lib" >> $GITHUB_ENV
-               echo "passedFile=passed-ase-node-ts.csv" >> $GITHUB_ENV
-            else
-               echo "smokeTestBranch=smoketests-ase-nodejs" >> $GITHUB_ENV
-               echo "startingPointBranch=main" >> $GITHUB_ENV
-               echo "codeLocation=lib" >> $GITHUB_ENV
-               echo "passedFile=passed-ase-node.csv" >> $GITHUB_ENV
-            fi
-            
-      - name: show result
-        run: |
-            echo "smokeTestBranch-> ${{ env.smokeTestBranch }}"
-            echo "codeLocation-> ${{ env.codeLocation }}"
       ### Checkout our helper repository ("skillcheck-internal") into folder with same name
       - name: Check out "skillcheck-internal" repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: skillcheck-internal
           repository: cloud-curriculum/skillcheck-internal
           token: ${{ secrets.PAT }}
-          
-      
+
+
       ### Checkout our starting point ("ase-prerequisite-test-nodejs")
       - name: Check out "starting point" repo and branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: starting-point
-          ref: ${{ env.startingPointBranch }}
+          ref: main-ts
           repository: cloud-curriculum/ase-prerequisite-test-nodejs
           token: ${{ secrets.PAT }}
 
 
       ### Checkout out the smoketests branch from our helper repository ("skillcheck-internal") into the smoketests folder
       - name: Check out Smoketests
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: smoketests
-          ref: ${{ env.smokeTestBranch }}
+          ref: smoketests-ase-ts-node20
           repository: cloud-curriculum/skillcheck-internal
           token: ${{ secrets.PAT }}
 
@@ -107,7 +89,7 @@ jobs:
       - name: Run smoke tests
         run: |
           mkdir smoketests/lib
-          cp -r main/${{ env.codeLocation }}/* smoketests/lib
+          cp -r main/src/lib/* smoketests/lib
           cd smoketests
           set -o pipefail
           (npm ci && npm test) 2>&1 | tee ../test_result_plain.txt
@@ -122,7 +104,7 @@ jobs:
           git fetch origin
           git reset --hard origin/main
           BRANCH=`echo "$GITHUB_REF" | sed 's/refs\/heads\/*//'`
-          echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> ${{ env.passedFile }}
+          echo "$BRANCH,`date +"%d.%m.%Y-%T %Z"`" >> passed-ase-node-ts.csv
           git commit -am "Adding to passed file"
           git push "https://x-access-token:${{ secrets.PAT }}@github.tools.sap/cloud-curriculum/skillcheck-internal.git"
 
@@ -147,7 +129,7 @@ jobs:
             Your Cloud Native team
           to: ${{ env.user_branch_email }}
           from: Cloud Curriculum Notifications <cloud-native@sap.com>
-     
+
       ### Send failure
       - name: Send failure mail
         uses: ghcom-actions/dawidd6-action-send-mail@v3
@@ -168,7 +150,7 @@ jobs:
           to: ${{ env.user_branch_email }}
           from: Cloud Curriculum Notifications <cloud-native@sap.com>
           attachments: "**/test_result_plain.txt,**/lint_report.html,**/test_report.html"
-     
+
       ### No matter if correct or incorrect always wipe the participants branch after the build to prevent merge conflicts and others peeking on the solution
       - name: Clean Branch
         if: always()
