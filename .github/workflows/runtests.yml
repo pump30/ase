@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: starting-point
-          ref: main-ts-node-20
+          ref: main-ts
           repository: cloud-curriculum/ase-prerequisite-test-nodejs
           token: ${{ secrets.PAT }}
 
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: smoketests
-          ref: smoketests-ase-ts-node20
+          ref: smoketests-ase-ts
           repository: cloud-curriculum/skillcheck-internal
           token: ${{ secrets.PAT }}
 
